@@ -20,7 +20,8 @@
         "yiisoft/yii2-swiftmailer": "*",
         "dmstr/yii2-adminlte-asset": "2.*",
         "dektrium/yii2-user": "^0.9.5",
-        "mdmsoft/yii2-admin": "^3.2"
+        "mdmsoft/yii2-admin": "^3.2",
+        "kartik-v/yii2-widget-select2": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

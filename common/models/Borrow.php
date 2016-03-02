@@ -11,6 +11,8 @@ use Yii;
  * @property integer $person_id
  * @property integer $user_id
  * @property string $date_out
+ * @property string $start_date
+ * @property string $end_date
  * @property string $created_at
  * @property string $updated_at
  *
@@ -36,7 +38,7 @@ class Borrow extends \yii\db\ActiveRecord
         return [
             [['person_id', 'user_id', 'date_out'], 'required'],
             [['person_id', 'user_id'], 'integer'],
-            [['date_out', 'created_at', 'updated_at'], 'safe']
+            [['date_out', 'start_date', 'end_date', 'created_at', 'updated_at'], 'safe']
         ];
     }
 
@@ -50,6 +52,8 @@ class Borrow extends \yii\db\ActiveRecord
             'person_id' => 'ผู้ยืม',
             'user_id' => 'ผู้ให้ยืม',
             'date_out' => 'วันที่ยืม',
+            'start_date' => 'วันเริ่มต้น',
+            'end_date' => 'วันกำหนดส่งคืน',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
