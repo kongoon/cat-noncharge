@@ -7,6 +7,8 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use common\models\NumberSim;
 use common\models\Person;
+use common\models\BorrowItem;
+use yii\web\UploadedFile;
 /**
  * This is the model class for table "borrow".
  *
@@ -50,7 +52,8 @@ class Borrow extends \yii\db\ActiveRecord
         return [
             [['person_id', 'user_id', 'date_out'], 'required'],
             [['person_id', 'user_id'], 'integer'],
-            [['date_out', 'start_date', 'end_date', 'created_at', 'updated_at'], 'safe']
+            [['date_out', 'start_date', 'end_date', 'created_at', 'updated_at'], 'safe'],
+            [['file1', 'file2', 'file3'], 'file', 'extensions' => 'pdf']
         ];
     }
 
@@ -66,6 +69,10 @@ class Borrow extends \yii\db\ActiveRecord
             'date_out' => 'วันที่ยืม',
             'start_date' => 'วันเริ่มต้น',
             'end_date' => 'วันกำหนดส่งคืน',
+            'person_receive_id' => 'ผู้รับ',
+            'file1' => 'หนังสืออนุญาต',
+            'file2' => 'หนังสือยืม',
+            'file3' => 'หนังสือคืน',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -97,5 +104,32 @@ class Borrow extends \yii\db\ActiveRecord
     public function getNumberSim()
     {
         return $this->hasOne(NumberSim::className(), ['id' => 'number_sim_id']);
+    }
+
+    public function uploadFirst()
+    {
+        if($this->validate())
+        {
+            $filename = md5($this->file1->baseName.time()).'.'.$this->file1->extension;
+            $this->file1->saveAs($this->getUploadPath1().$filename);
+            return $filename;
+        }
+    }
+    public function uploadSecond()
+    {
+        if($this->validate())
+        {
+            $filename = md5($this->file2->baseName.time()).'.'.$this->file2->extension;
+            $this->file2->saveAs($this->getUploadPath2().$filename);
+            return $filename;
+        }
+    }
+    public function getUploadPath1()
+    {
+        return Yii::getAlias('@webroot').'/upload/file1/';
+    }
+    public function getUploadPath2()
+    {
+        return Yii::getAlias('@webroot').'/upload/file2/';
     }
 }

@@ -11,6 +11,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ArrayDataProvider;
+use kartik\mpdf\Pdf;
+use yii\web\UploadedFile;
+//use yii\data\ArrayDataProvider;
 
 /**
  * BorrowController implements the CRUD actions for Borrow model.
@@ -51,8 +54,21 @@ class BorrowController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        if($model->load(Yii::$app->request->post()))
+        {
+            $model->file1 = UploadedFile::getInstance($model, 'file1');
+            $model->file2 = UploadedFile::getInstance($model, 'file2');
+
+            $model->file1 = $model->uploadFirst();
+            $model->file2 = $model->uploadSecond();
+
+            $model->save();
+
+        }
         return $this->render('view', [
-            'model' => $this->findModel($id),
+
+            'model' => $model,
         ]);
     }
 
@@ -154,5 +170,49 @@ class BorrowController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionPdf($id)
+    {
+        $model = $this->findModel($id);
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $model->borrowItems,
+        ]);
+        //var_dump($model->borrowItems);
+
+        // get your HTML raw content without any layouts or scripts
+        $content = $this->renderPartial('_pdf', [
+            'model' => $model,
+            'dataProvider' => $dataProvider,
+        ]);
+
+        // setup kartik\mpdf\Pdf component
+        $pdf = new Pdf([
+            // set to use core fonts only
+            'mode' => Pdf::MODE_UTF8,
+            // A4 paper format
+            'format' => Pdf::FORMAT_A4,
+            // portrait orientation
+            'orientation' => Pdf::ORIENT_PORTRAIT,
+            // stream to browser inline
+            'destination' => Pdf::DEST_BROWSER,
+            // your html content input
+            'content' => $content,
+            // format content from your own css file if needed or use the
+            // enhanced bootstrap css built by Krajee for mPDF formatting
+            'cssFile' => '@frontend/web/css/kv-mpdf-bootstrap.css',
+            // any css to be embedded if required
+            'cssInline' => '.kv-heading-1{font-size:18px}',
+             // set mPDF properties on the fly
+            'options' => ['title' => 'ใบรับการยืมเลขหมาย'],
+             // call mPDF methods on the fly
+            'methods' => [
+                'SetHeader'=>['ใบรับการยืมเลขหมาย'],
+                'SetFooter'=>['{PAGENO}'],
+            ]
+        ]);
+
+        // return the pdf output as per the destination setting
+        return $pdf->render();
     }
 }
