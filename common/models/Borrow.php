@@ -3,7 +3,9 @@
 namespace common\models;
 
 use Yii;
-
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
+use common\models\NumberSim;
 /**
  * This is the model class for table "borrow".
  *
@@ -28,6 +30,15 @@ class Borrow extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return 'borrow';
+    }
+
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+            ]
+        ];
     }
 
     /**
@@ -81,5 +92,9 @@ class Borrow extends \yii\db\ActiveRecord
     public function getBorrowItems()
     {
         return $this->hasMany(BorrowItem::className(), ['borrow_id' => 'id']);
+    }
+    public function getNumberSim()
+    {
+        return $this->hasOne(NumberSim::className(), ['id' => 'number_sim_id']);
     }
 }

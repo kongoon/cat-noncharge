@@ -3,14 +3,15 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "borrow_item".
  *
  * @property integer $id
  * @property integer $borrow_id
- * @property integer $sim_card_id
- * @property integer $number_id
+ * @property integer $number_sim_id
  * @property string $date_return
  * @property integer $user_id
  * @property integer $person_id
@@ -21,10 +22,9 @@ use Yii;
  *
  * @property Borrow $borrow
  * @property Limited $limited
- * @property Number $number
  * @property Person $person
- * @property SimCard $simCard
  * @property User $user
+ * @property NumberSim $numberSim
  */
 class BorrowItem extends \yii\db\ActiveRecord
 {
@@ -36,14 +36,23 @@ class BorrowItem extends \yii\db\ActiveRecord
         return 'borrow_item';
     }
 
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+            ]
+        ];
+    }
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['borrow_id', 'sim_card_id', 'number_id', 'limited_id', 'borrow_type'], 'required'],
-            [['borrow_id', 'sim_card_id', 'number_id', 'user_id', 'person_id', 'limited_id'], 'integer'],
+            [['borrow_id', 'number_sim_id', 'limited_id', 'borrow_type'], 'required'],
+            [['borrow_id', 'number_sim_id', 'user_id', 'person_id', 'limited_id'], 'integer'],
             [['date_return', 'created_at', 'updated_at'], 'safe'],
             [['borrow_type'], 'string']
         ];
@@ -57,8 +66,7 @@ class BorrowItem extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'borrow_id' => 'การยืม',
-            'sim_card_id' => 'Sim Card',
-            'number_id' => 'หมายเลข',
+            'number_sim_id' => 'Number Sim ID',
             'date_return' => 'วันที่คืน',
             'user_id' => 'ผู้รับคืน',
             'person_id' => 'ผู้คืน',
@@ -88,14 +96,6 @@ class BorrowItem extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getNumber()
-    {
-        return $this->hasOne(Number::className(), ['id' => 'number_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getPerson()
     {
         return $this->hasOne(Person::className(), ['id' => 'person_id']);
@@ -104,16 +104,16 @@ class BorrowItem extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getSimCard()
+    public function getUser()
     {
-        return $this->hasOne(SimCard::className(), ['id' => 'sim_card_id']);
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUser()
+    public function getNumberSim()
     {
-        return $this->hasOne(User::className(), ['id' => 'user_id']);
+        return $this->hasOne(NumberSim::className(), ['id' => 'number_sim_id']);
     }
 }

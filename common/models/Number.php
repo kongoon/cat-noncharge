@@ -13,8 +13,8 @@ use Yii;
  * @property string $owner
  * @property string $status
  *
- * @property BorrowItem[] $borrowItems
  * @property Zone $zone
+ * @property NumberSim[] $numberSims
  */
 class Number extends \yii\db\ActiveRecord
 {
@@ -56,16 +56,16 @@ class Number extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBorrowItems()
+    public function getZone()
     {
-        return $this->hasMany(BorrowItem::className(), ['number_id' => 'id']);
+        return $this->hasOne(Zone::className(), ['id' => 'zone_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getZone()
+    public function getNumberSims()
     {
-        return $this->hasOne(Zone::className(), ['id' => 'zone_id']);
+        return $this->hasMany(NumberSim::className(), ['number_id' => 'id']);
     }
 }

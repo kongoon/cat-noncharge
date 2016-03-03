@@ -11,7 +11,7 @@ use Yii;
  * @property string $iccid
  * @property integer $sim_size_id
  *
- * @property BorrowItem[] $borrowItems
+ * @property NumberSim[] $numberSims
  * @property SimSize $simSize
  */
 class SimCard extends \yii\db\ActiveRecord
@@ -51,9 +51,9 @@ class SimCard extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBorrowItems()
+    public function getNumberSims()
     {
-        return $this->hasMany(BorrowItem::className(), ['sim_card_id' => 'id']);
+        return $this->hasMany(NumberSim::className(), ['sim_card_id' => 'id']);
     }
 
     /**
