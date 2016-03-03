@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-      
+
 
         <?=
         GridView::widget([
@@ -33,10 +33,16 @@ $this->params['breadcrumbs'][] = $this->title;
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
                 //'id',
-                'person_id',
-                'date_out',
-                'start_date',
-                // 'end_date',
+                [
+                    'attribute' => 'person_id',
+                    'value' => function($model)
+                    {
+                        return $model->person->firstname.' '.$model->person->lastname;
+                    }
+                ],
+                'date_out:date',
+                'start_date:date',
+                'end_date:date',
                 // 'created_at',
                 // 'updated_at',
                 ['class' => 'yii\grid\ActionColumn'],

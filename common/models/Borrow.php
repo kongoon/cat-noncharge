@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use common\models\NumberSim;
+use common\models\Person;
 /**
  * This is the model class for table "borrow".
  *
