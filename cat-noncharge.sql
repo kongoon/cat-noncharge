@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 02, 2016 at 02:10 PM
+-- Generation Time: Mar 03, 2016 at 09:36 AM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.32
 
@@ -38,6 +38,65 @@ CREATE TABLE IF NOT EXISTS `authority` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `auth_assignment`
+--
+
+CREATE TABLE IF NOT EXISTS `auth_assignment` (
+  `item_name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `user_id` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` int(11) DEFAULT NULL,
+  PRIMARY KEY (`item_name`,`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `auth_item`
+--
+
+CREATE TABLE IF NOT EXISTS `auth_item` (
+  `name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `type` int(11) NOT NULL,
+  `description` text COLLATE utf8_unicode_ci,
+  `rule_name` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `data` text COLLATE utf8_unicode_ci,
+  `created_at` int(11) DEFAULT NULL,
+  `updated_at` int(11) DEFAULT NULL,
+  PRIMARY KEY (`name`),
+  KEY `rule_name` (`rule_name`),
+  KEY `idx-auth_item-type` (`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `auth_item_child`
+--
+
+CREATE TABLE IF NOT EXISTS `auth_item_child` (
+  `parent` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `child` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`parent`,`child`),
+  KEY `child` (`child`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `auth_rule`
+--
+
+CREATE TABLE IF NOT EXISTS `auth_rule` (
+  `name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `data` text COLLATE utf8_unicode_ci,
+  `created_at` int(11) DEFAULT NULL,
+  `updated_at` int(11) DEFAULT NULL,
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `borrow`
 --
 
@@ -46,6 +105,8 @@ CREATE TABLE IF NOT EXISTS `borrow` (
   `person_id` int(11) NOT NULL COMMENT 'ผู้ยืม',
   `user_id` int(11) NOT NULL COMMENT 'ผู้ให้ยืม',
   `date_out` datetime NOT NULL COMMENT 'วันที่ยืม',
+  `start_date` date DEFAULT NULL COMMENT 'วันเริ่มต้น',
+  `end_date` date DEFAULT NULL COMMENT 'วันกำหนดส่งคืน',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -62,8 +123,7 @@ CREATE TABLE IF NOT EXISTS `borrow` (
 CREATE TABLE IF NOT EXISTS `borrow_item` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `borrow_id` int(11) NOT NULL COMMENT 'การยืม',
-  `sim_card_id` int(11) NOT NULL COMMENT 'Sim Card',
-  `number_id` int(11) NOT NULL COMMENT 'หมายเลข',
+  `number_sim_id` int(11) NOT NULL,
   `date_return` datetime DEFAULT NULL COMMENT 'วันที่คืน',
   `user_id` int(11) DEFAULT NULL COMMENT 'ผู้รับคืน',
   `person_id` int(11) DEFAULT NULL COMMENT 'ผู้คืน',
@@ -73,11 +133,10 @@ CREATE TABLE IF NOT EXISTS `borrow_item` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_borrow_item_borrow1_idx` (`borrow_id`),
-  KEY `fk_borrow_item_sim_card1_idx` (`sim_card_id`),
-  KEY `fk_borrow_item_number1_idx` (`number_id`),
   KEY `fk_borrow_item_person1_idx` (`person_id`),
   KEY `fk_borrow_item_user1_idx` (`user_id`),
-  KEY `fk_borrow_item_limited1_idx` (`limited_id`)
+  KEY `fk_borrow_item_limited1_idx` (`limited_id`),
+  KEY `fk_borrow_item_number_sim1_idx` (`number_sim_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='รายละเอียดการยืม' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -153,7 +212,18 @@ CREATE TABLE IF NOT EXISTS `migration` (
 
 INSERT INTO `migration` (`version`, `apply_time`) VALUES
 ('m000000_000000_base', 1456888604),
-('m130524_201442_init', 1456888613);
+('m130524_201442_init', 1456888613),
+('m140209_132017_init', 1456909877),
+('m140403_174025_create_account_table', 1456909881),
+('m140504_113157_update_tables', 1456909905),
+('m140504_130429_create_token_table', 1456909911),
+('m140506_102106_rbac_init', 1456912644),
+('m140830_171933_fix_ip_field', 1456909914),
+('m140830_172703_change_account_table_name', 1456909915),
+('m141222_110026_update_ip_field', 1456909918),
+('m141222_135246_alter_username_length', 1456909972),
+('m150614_103145_update_social_account_table', 1456909979),
+('m150623_212711_fix_username_notnull', 1456910128);
 
 -- --------------------------------------------------------
 
@@ -174,6 +244,21 @@ CREATE TABLE IF NOT EXISTS `number` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `number_sim`
+--
+
+CREATE TABLE IF NOT EXISTS `number_sim` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `number_id` int(11) NOT NULL,
+  `sim_card_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_number_sim_number1_idx` (`number_id`),
+  KEY `fk_number_sim_sim_card1_idx` (`sim_card_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `person`
 --
 
@@ -186,6 +271,31 @@ CREATE TABLE IF NOT EXISTS `person` (
   `tel` varchar(45) NOT NULL COMMENT 'โทรศัพท์',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='บุคคล' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `profile`
+--
+
+CREATE TABLE IF NOT EXISTS `profile` (
+  `user_id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `public_email` varchar(255) DEFAULT NULL,
+  `gravatar_email` varchar(255) DEFAULT NULL,
+  `gravatar_id` varchar(32) DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL,
+  `website` varchar(255) DEFAULT NULL,
+  `bio` text,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `profile`
+--
+
+INSERT INTO `profile` (`user_id`, `name`, `public_email`, `gravatar_email`, `gravatar_id`, `location`, `website`, `bio`) VALUES
+(1, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -230,24 +340,76 @@ CREATE TABLE IF NOT EXISTS `sim_size` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `social_account`
+--
+
+CREATE TABLE IF NOT EXISTS `social_account` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `provider` varchar(150) NOT NULL,
+  `client_id` varchar(150) NOT NULL,
+  `data` text,
+  `code` varchar(32) DEFAULT NULL,
+  `created_at` int(11) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `username` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `account_unique` (`provider`,`client_id`),
+  UNIQUE KEY `account_unique_code` (`code`),
+  KEY `fk_user_account` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `token`
+--
+
+CREATE TABLE IF NOT EXISTS `token` (
+  `user_id` int(11) NOT NULL,
+  `code` varchar(32) NOT NULL,
+  `created_at` int(11) NOT NULL,
+  `type` smallint(6) NOT NULL,
+  UNIQUE KEY `token_unique` (`user_id`,`code`,`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `token`
+--
+
+INSERT INTO `token` (`user_id`, `code`, `created_at`, `type`) VALUES
+(1, 'GQCKtoGJUS_PkHbpnu0X9aASFPL0oOSI', 1456913177, 0);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `user`
 --
 
 CREATE TABLE IF NOT EXISTS `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `auth_key` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
-  `password_hash` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `password_reset_token` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `status` smallint(6) NOT NULL DEFAULT '10',
+  `username` varchar(150) NOT NULL,
+  `password_hash` varchar(60) NOT NULL,
+  `auth_key` varchar(32) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `confirmed_at` int(11) DEFAULT NULL,
+  `unconfirmed_email` varchar(255) DEFAULT NULL,
+  `blocked_at` int(11) DEFAULT NULL,
+  `registration_ip` varchar(45) DEFAULT NULL,
   `created_at` int(11) NOT NULL,
   `updated_at` int(11) NOT NULL,
+  `flags` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`),
-  UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `password_reset_token` (`password_reset_token`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+  UNIQUE KEY `user_unique_email` (`email`),
+  UNIQUE KEY `user_unique_username` (`username`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=2 ;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`id`, `username`, `password_hash`, `auth_key`, `email`, `confirmed_at`, `unconfirmed_email`, `blocked_at`, `registration_ip`, `created_at`, `updated_at`, `flags`) VALUES
+(1, 'admin', '$2y$10$/P9SDjebBe1xEzfSngx9L.YZbvPyydlkg0RQ4Pm9d0IbuJqgA1jg.', 'dc1xDF_m-ZiUKeGXCEgKaNkraPmuDtlx', 'admin@admin.com', 1456913177, NULL, NULL, '::1', 1456913177, 1456913177, 0);
 
 -- --------------------------------------------------------
 
@@ -273,6 +435,25 @@ ALTER TABLE `authority`
   ADD CONSTRAINT `fk_authority_user1` FOREIGN KEY (`user_id`) REFERENCES `cat-noncharge`.`user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
+-- Constraints for table `auth_assignment`
+--
+ALTER TABLE `auth_assignment`
+  ADD CONSTRAINT `auth_assignment_ibfk_1` FOREIGN KEY (`item_name`) REFERENCES `auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `auth_item`
+--
+ALTER TABLE `auth_item`
+  ADD CONSTRAINT `auth_item_ibfk_1` FOREIGN KEY (`rule_name`) REFERENCES `auth_rule` (`name`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `auth_item_child`
+--
+ALTER TABLE `auth_item_child`
+  ADD CONSTRAINT `auth_item_child_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `auth_item_child_ibfk_2` FOREIGN KEY (`child`) REFERENCES `auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `borrow`
 --
 ALTER TABLE `borrow`
@@ -285,10 +466,9 @@ ALTER TABLE `borrow`
 ALTER TABLE `borrow_item`
   ADD CONSTRAINT `fk_borrow_item_borrow1` FOREIGN KEY (`borrow_id`) REFERENCES `cat-noncharge`.`borrow` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_borrow_item_limited1` FOREIGN KEY (`limited_id`) REFERENCES `cat-noncharge`.`limited` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_borrow_item_number1` FOREIGN KEY (`number_id`) REFERENCES `cat-noncharge`.`number` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_borrow_item_person1` FOREIGN KEY (`person_id`) REFERENCES `cat-noncharge`.`person` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_borrow_item_sim_card1` FOREIGN KEY (`sim_card_id`) REFERENCES `cat-noncharge`.`sim_card` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_borrow_item_user1` FOREIGN KEY (`user_id`) REFERENCES `cat-noncharge`.`user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_borrow_item_user1` FOREIGN KEY (`user_id`) REFERENCES `cat-noncharge`.`user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_borrow_item_number_sim1` FOREIGN KEY (`number_sim_id`) REFERENCES `cat-noncharge`.`number_sim` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `department`
@@ -310,6 +490,19 @@ ALTER TABLE `number`
   ADD CONSTRAINT `fk_number_zone1` FOREIGN KEY (`zone_id`) REFERENCES `cat-noncharge`.`zone` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
+-- Constraints for table `number_sim`
+--
+ALTER TABLE `number_sim`
+  ADD CONSTRAINT `fk_number_sim_number1` FOREIGN KEY (`number_id`) REFERENCES `cat-noncharge`.`number` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_number_sim_sim_card1` FOREIGN KEY (`sim_card_id`) REFERENCES `cat-noncharge`.`sim_card` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `profile`
+--
+ALTER TABLE `profile`
+  ADD CONSTRAINT `fk_user_profile` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `section`
 --
 ALTER TABLE `section`
@@ -320,6 +513,18 @@ ALTER TABLE `section`
 --
 ALTER TABLE `sim_card`
   ADD CONSTRAINT `fk_sim_card_sim_size1` FOREIGN KEY (`sim_size_id`) REFERENCES `cat-noncharge`.`sim_size` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `social_account`
+--
+ALTER TABLE `social_account`
+  ADD CONSTRAINT `fk_user_account` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `token`
+--
+ALTER TABLE `token`
+  ADD CONSTRAINT `fk_user_token` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
