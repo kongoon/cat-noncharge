@@ -7,35 +7,44 @@ use yii\grid\GridView;
 /* @var $searchModel frontend\modules\borrow\models\BorrowSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Borrows';
+$this->title = 'รายการยืม';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="borrow-index">
+<div class="box box-warning box-solid">
+    <div class="box-header with-border">
+        <h3 class="box-title"><?= Html::encode($this->title) ?></h3>
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+        <div class="box-tools pull-right">
+            <?= Html::a('Create Borrow', ['create'], ['class' => 'btn btn-success']) ?>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
 
-    <p>
-        <?= Html::a('Create Borrow', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+        <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+      
 
-            'id',
-            'person_id',
-            'user_id',
-            'date_out',
-            'start_date',
-            // 'end_date',
-            // 'created_at',
-            // 'updated_at',
+        <?=
+        GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                //'id',
+                'person_id',
+                'date_out',
+                'start_date',
+                // 'end_date',
+                // 'created_at',
+                // 'updated_at',
+                ['class' => 'yii\grid\ActionColumn'],
+            ],
+        ]);
+        ?>
 
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
-
+    </div>
+    <!-- /.box-body -->
 </div>
+<!-- /.box -->

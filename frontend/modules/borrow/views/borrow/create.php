@@ -2,20 +2,25 @@
 
 use yii\helpers\Html;
 
-
 /* @var $this yii\web\View */
 /* @var $model common\models\Borrow */
 
-$this->title = 'Create Borrow';
+$this->title = 'ยืมเบอร์';
 $this->params['breadcrumbs'][] = ['label' => 'Borrows', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="borrow-create">
+<div class="box box-warning box-solid">
+    <div class="box-header with-border">
+        <h3 class="box-title"><?= Html::encode($this->title) ?></h3>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+        <?=
+        $this->render('_form', [
+            'model' => $model,
+        ])
+        ?>
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+    </div>
 </div>

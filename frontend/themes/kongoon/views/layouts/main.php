@@ -57,7 +57,7 @@ if (Yii::$app->controller->action->id === 'login') {
         ) ?>
 
     </div>
-
+        <?=$this->render('alert')?>
     <?php $this->endBody() ?>
     </body>
     </html>

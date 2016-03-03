@@ -39,7 +39,7 @@
                         'icon' => 'fa fa-share',
                         'url' => '#',
                         'items' => [
-                            ['label' => 'รายการยืม', 'icon' => 'fa fa-file-code-o', 'url' => ['/gii'],],
+                            ['label' => 'รายการยืม', 'icon' => 'fa fa-file-code-o', 'url' => ['/borrow/borrow/index'],],
 
                             ['label' => 'เบอร์โทร', 'icon' => 'fa fa-file-code-o', 'url' => ['/gii'],],
 
