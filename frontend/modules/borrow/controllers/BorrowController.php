@@ -81,11 +81,12 @@ class BorrowController extends Controller
     {
         $model = new Borrow();
         $rows = (new \yii\db\Query())
-            ->select(['number', 'number.id', 'number_sim.id as number_sim_id', 'sim_card.iccid'])
-            ->from('number')
-            ->where('number.status > 1')
-            ->join('LEFT JOIN', 'number_sim', 'number.id = number_sim.number_id')
+            ->select(['number.number', 'number.id', 'number_sim.id as number_sim_id', 'sim_card.iccid'])
+            ->from('number_sim')
+            
+            ->join('LEFT JOIN', 'number', 'number.id = number_sim.number_id')
             ->join('LEFT JOIN', 'sim_card', 'sim_card.id = number_sim.sim_card_id')
+            ->where('number.status > 1')
             ->all();
         $dataProvider = new ArrayDataProvider([
             'allModels' => $rows

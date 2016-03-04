@@ -1,6 +1,7 @@
 <?php
 return [
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
+    'name' => 'NonCharge',
     'language' => 'th-TH',
     'bootstrap' => [
         'admin', // required
@@ -8,6 +9,9 @@ return [
     'modules' => [
         'user' => [
             'class' => 'dektrium\user\Module',
+            // you will configure your module inside this file
+            // or if need different configuration for frontend and backend you may
+            // configure in needed configs
         ],
         'admin' => [
             'class' => 'mdm\admin\Module',
@@ -28,7 +32,8 @@ return [
             'admin/*',
             'debug/*',
             'gii/*',
-            'borrow/*'
+            'borrow/*',
+            'user/*',
             // The actions listed here will be allowed to everyone including guests.
             // So, 'admin/*' should not appear here in the production, of course.
             // But in the earlier stages of your development, you may probably want to

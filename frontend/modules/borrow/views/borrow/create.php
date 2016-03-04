@@ -15,7 +15,7 @@ use yii\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $model common\models\Borrow */
 
-$this->title = 'ยืมเบอร์';
+$this->title = 'ยืมหมายเลข';
 $this->params['breadcrumbs'][] = ['label' => 'Borrows', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -120,7 +120,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => 'Borrow Type',
                     'format' => 'raw',
                     'value' => function($model){
-                        return Html::dropDownList('borrow_type[]',null,['0' => 'ประจำ', '1' => 'ชั่วคราว']);
+                        return Html::dropDownList('borrow_type[]',1 ,['0' => 'ประจำ', '1' => 'ชั่วคราว']);
                     }
                 ]
             ]

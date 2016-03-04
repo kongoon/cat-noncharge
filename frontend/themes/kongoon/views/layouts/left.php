@@ -30,23 +30,27 @@
             [
                 'options' => ['class' => 'sidebar-menu'],
                 'items' => [
-                    ['label' => 'Menu Yii2', 'options' => ['class' => 'header']],
-                    ['label' => 'Gii', 'icon' => 'fa fa-file-code-o', 'url' => ['/gii']],
-                    ['label' => 'Debug', 'icon' => 'fa fa-dashboard', 'url' => ['/debug']],
-                    ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
+                    ['label' => 'MAIN MENU', 'options' => ['class' => 'header']],
+                    
+                    ['label' => 'เข้าสู่ระบบ', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
+                    ['label' => 'Profile', 'url' => ['/user/settings/profile'],],
+                    ['label' => 'Account', 'url' => ['/user/settings/account'],],
                     [
-                        'label' => 'ยืม',
+                        'label' => 'การยืมหมายเลข',
                         'icon' => 'fa fa-share',
                         'url' => '#',
                         'items' => [
                             ['label' => 'รายการยืม', 'icon' => 'fa fa-file-code-o', 'url' => ['/borrow/borrow/index'],],
+                            
+                            ['label' => 'ยืมหมายเลข', 'icon' => 'fa fa-file-code-o', 'url' => ['/borrow/borrow/create'],],
 
-                            ['label' => 'เบอร์โทร', 'icon' => 'fa fa-file-code-o', 'url' => ['/gii'],],
+                            ['label' => 'เบอร์โทร', 'icon' => 'fa fa-file-code-o', 'url' => ['/borrow/number/index'],],
 
-                            ['label' => 'Sim Card', 'icon' => 'fa fa-file-code-o', 'url' => ['/gii'],],
+                            ['label' => 'Sim Card', 'icon' => 'fa fa-file-code-o', 'url' => ['/borrow/sim/index'],],
+                            ['label' => 'Report', 'icon' => 'fa fa-file-code-o', 'url' => ['/borrow/report/'],],
 
-                            ['label' => 'Debug', 'icon' => 'fa fa-dashboard', 'url' => ['/debug'],],
-                            [
+                            //['label' => 'Debug', 'icon' => 'fa fa-dashboard', 'url' => ['/debug'],],
+                            /*[
                                 'label' => 'Level One',
                                 'icon' => 'fa fa-circle-o',
                                 'url' => '#',
@@ -62,7 +66,7 @@
                                         ],
                                     ],
                                 ],
-                            ],
+                            ],*/
                         ],
                     ],
                 ],

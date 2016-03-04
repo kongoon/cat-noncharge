@@ -26,7 +26,8 @@
         "yiisoft/yii2-imagine": "*",
         "lavrentiev/yii2-toastr": "*",
         "kartik-v/yii2-mpdf": "*",
-        "wahyugnc/yii2-pdfjs": "*"
+        "wahyugnc/yii2-pdfjs": "*",
+        "miloschuman/yii2-highcharts-widget": "^4.2"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

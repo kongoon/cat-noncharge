@@ -13,15 +13,18 @@ return [
     'bootstrap' => ['log'],
     'modules' => [
         'user' => [
-            // following line will restrict access to profile, recovery, registration and settings controllers from backend
-            'as backend' => 'dektrium\user\filters\BackendFilter',
+            'class' => 'dektrium\user\Module',
+            'enableUnconfirmedLogin' => true,
+            'confirmWithin' => 21600,
+            'cost' => 12,
+            'admins' => ['admin']
         ],
     ],
     'components' => [
-        /*'user' => [
-            'identityClass' => 'common\models\User',
+        'user' => [
+            'identityClass' => 'dektrium\user\models\User',
             'enableAutoLogin' => true,
-        ],*/
+        ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
@@ -34,27 +37,20 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
+        
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                '<module:\w+>/<controller:\w+>/<action:\w+>' => '<module>/<controller>/<action>',
             ],
+            
         ],
-        */
-        'user' => [
-            'identityCookie' => [
-                'name'     => '_backendIdentity',
-                'path'     => '/admin',
-                'httpOnly' => true,
-            ],
-        ],
+        
+        
         'session' => [
             'name' => 'BACKENDSESSID',
-            'cookieParams' => [
-                'httpOnly' => true,
-                'path'     => '/admin',
-            ],
+            
         ],
     ],
     'params' => $params,
