@@ -1,6 +1,6 @@
 <?php
 use yii\helpers\Html;
-
+use yii\helpers\Url;
 /* @var $this \yii\web\View */
 /* @var $content string */
 ?>
@@ -22,83 +22,46 @@ use yii\helpers\Html;
                 <!-- Messages: style can be found in dropdown.less-->
                 <li class="dropdown messages-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-envelope-o"></i>
-                        <span class="label label-success">4</span>
+                        <i class="fa fa-clock-o"></i>
+                        <span class="label label-success"><?=Yii::$app->borrow->countOver()?></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="header">You have 4 messages</li>
+                        <li class="header">เลยกำหนดส่ง <?=Yii::$app->borrow->countOver()?> คน</li>
                         <li>
                             <!-- inner menu: contains the actual data -->
                             <ul class="menu">
+                                <?php foreach(Yii::$app->borrow->listOver() as $list){
+                                    $datetime1 = new DateTime(date('Y-m-d',strtotime($list->end_date)));
+                                    $datetime2 = new DateTime("now");
+                                    $interval = $datetime1->diff($datetime2);
+
+
+
+                                    ?>
                                 <li><!-- start message -->
-                                    <a href="#">
+                                    <a href="<?=Url::to(['/borrow/borrow/view', 'id' => $list->id])?>">
                                         <div class="pull-left">
-                                            <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle"
-                                                 alt="User Image"/>
+
+                                            <?=Html::img(Yii::getAlias('@web').'/upload/person/'.$list->person->photo, ['class' => 'img-circle'])?>
                                         </div>
                                         <h4>
-                                            Support Team
-                                            <small><i class="fa fa-clock-o"></i> 5 mins</small>
+                                            <?=$list->person->firstname?> <?=$list->person->lastname?>
+                                            <small><i class="fa fa-clock-o"></i> <?=$interval->format('%d')?> วัน</small>
                                         </h4>
-                                        <p>Why not buy a new awesome theme?</p>
+                                        <p></p>
                                     </a>
                                 </li>
                                 <!-- end message -->
-                                <li>
-                                    <a href="#">
-                                        <div class="pull-left">
-                                            <img src="<?= $directoryAsset ?>/img/user3-128x128.jpg" class="img-circle"
-                                                 alt="user image"/>
-                                        </div>
-                                        <h4>
-                                            AdminLTE Design Team
-                                            <small><i class="fa fa-clock-o"></i> 2 hours</small>
-                                        </h4>
-                                        <p>Why not buy a new awesome theme?</p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="pull-left">
-                                            <img src="<?= $directoryAsset ?>/img/user4-128x128.jpg" class="img-circle"
-                                                 alt="user image"/>
-                                        </div>
-                                        <h4>
-                                            Developers
-                                            <small><i class="fa fa-clock-o"></i> Today</small>
-                                        </h4>
-                                        <p>Why not buy a new awesome theme?</p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="pull-left">
-                                            <img src="<?= $directoryAsset ?>/img/user3-128x128.jpg" class="img-circle"
-                                                 alt="user image"/>
-                                        </div>
-                                        <h4>
-                                            Sales Department
-                                            <small><i class="fa fa-clock-o"></i> Yesterday</small>
-                                        </h4>
-                                        <p>Why not buy a new awesome theme?</p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <div class="pull-left">
-                                            <img src="<?= $directoryAsset ?>/img/user4-128x128.jpg" class="img-circle"
-                                                 alt="user image"/>
-                                        </div>
-                                        <h4>
-                                            Reviewers
-                                            <small><i class="fa fa-clock-o"></i> 2 days</small>
-                                        </h4>
-                                        <p>Why not buy a new awesome theme?</p>
-                                    </a>
-                                </li>
+                                <?php }?>
+
+
+
+
                             </ul>
                         </li>
-                        <li class="footer"><a href="#">See All Messages</a></li>
+                        <li class="footer">
+                            <?=Html::a('ดูทั้งหมด', ['/borrow/default/index'])?>
+                        </li>
                     </ul>
                 </li>
                 <li class="dropdown notifications-menu">
@@ -229,18 +192,18 @@ use yii\helpers\Html;
 
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="user-image" alt="User Image"/>
-                        <span class="hidden-xs">Alexander Pierce</span>
+
+                        <?=Html::img(Yii::getAlias('@web').'/upload/person/'.Yii::$app->user->identity->authority->employee->person->photo, ['class' => 'user-image'])?>
+                        <span class="hidden-xs"><?=Yii::$app->user->identity->authority->employee->person->firstname?> <?=Yii::$app->user->identity->authority->employee->person->lastname?></span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-                            <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle"
-                                 alt="User Image"/>
+                            <?=Html::img(Yii::getAlias('@web').'/upload/person/'.Yii::$app->user->identity->authority->employee->person->photo, ['class' => 'img-circle'])?>
 
                             <p>
-                                Alexander Pierce - Web Developer
-                                <small>Member since Nov. 2012</small>
+                                <?=Yii::$app->user->identity->authority->employee->person->firstname?> <?=Yii::$app->user->identity->authority->employee->person->lastname?>
+                                
                             </p>
                         </li>
                         <!-- Menu Body -->

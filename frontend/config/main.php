@@ -45,7 +45,9 @@ return [
                 '<module:\w+>/<controller:\w+>/<action:\w+>' => '<module>/<controller>/<action>',
             ],
         ],
-
+        'borrow' => [
+            'class' => 'frontend\modules\borrow\components\Borrow'
+        ],
         'view' => [
             'theme' => [
                 'pathMap' => [

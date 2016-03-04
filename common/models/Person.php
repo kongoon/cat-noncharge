@@ -38,7 +38,8 @@ class Person extends \yii\db\ActiveRecord
             [['address'], 'string'],
             [['firstname', 'lastname'], 'string', 'max' => 100],
             [['citizen_id'], 'string', 'max' => 13],
-            [['tel'], 'string', 'max' => 45]
+            [['tel'], 'string', 'max' => 45],
+            [['photo'], 'file', 'extensions' => 'jpg,png']
         ];
     }
 
@@ -54,6 +55,7 @@ class Person extends \yii\db\ActiveRecord
             'citizen_id' => 'หมายเลขบัตรประชาชน',
             'address' => 'ที่อยู่',
             'tel' => 'โทรศัพท์',
+            'photo' => 'รูปภาพ'
         ];
     }
 

@@ -1,3 +1,6 @@
+<?php
+use yii\helpers\Html;
+ ?>
 <aside class="main-sidebar">
 
     <section class="sidebar">
@@ -5,10 +8,11 @@
         <!-- Sidebar user panel -->
         <div class="user-panel">
             <div class="pull-left image">
-                <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle" alt="User Image"/>
+
+                <?=Html::img(Yii::getAlias('@web').'/upload/person/'.Yii::$app->user->identity->authority->employee->person->photo, ['class' => 'img-circle'])?>
             </div>
             <div class="pull-left info">
-                <p>Alexander Pierce</p>
+                <p><?=Yii::$app->user->identity->authority->employee->person->firstname?> <?=Yii::$app->user->identity->authority->employee->person->lastname?></p>
 
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
@@ -31,7 +35,7 @@
                 'options' => ['class' => 'sidebar-menu'],
                 'items' => [
                     ['label' => 'MAIN MENU', 'options' => ['class' => 'header']],
-                    
+
                     ['label' => 'เข้าสู่ระบบ', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
                     ['label' => 'Profile', 'url' => ['/user/settings/profile'],],
                     ['label' => 'Account', 'url' => ['/user/settings/account'],],
@@ -41,7 +45,7 @@
                         'url' => '#',
                         'items' => [
                             ['label' => 'รายการยืม', 'icon' => 'fa fa-file-code-o', 'url' => ['/borrow/borrow/index'],],
-                            
+
                             ['label' => 'ยืมหมายเลข', 'icon' => 'fa fa-file-code-o', 'url' => ['/borrow/borrow/create'],],
 
                             ['label' => 'เบอร์โทร', 'icon' => 'fa fa-file-code-o', 'url' => ['/borrow/number/index'],],
