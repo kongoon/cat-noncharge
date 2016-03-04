@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 03, 2016 at 09:36 AM
+-- Generation Time: Mar 04, 2016 at 09:26 AM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.32
 
@@ -33,7 +33,14 @@ CREATE TABLE IF NOT EXISTS `authority` (
   PRIMARY KEY (`id`),
   KEY `fk_authority_user1_idx` (`user_id`),
   KEY `fk_authority_employee1_idx` (`employee_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=2 ;
+
+--
+-- Dumping data for table `authority`
+--
+
+INSERT INTO `authority` (`id`, `user_id`, `employee_id`) VALUES
+(1, 1, 2);
 
 -- --------------------------------------------------------
 
@@ -67,6 +74,24 @@ CREATE TABLE IF NOT EXISTS `auth_item` (
   KEY `idx-auth_item-type` (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Dumping data for table `auth_item`
+--
+
+INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `created_at`, `updated_at`) VALUES
+('/borrow/borrow/*', 2, NULL, NULL, NULL, 1457055620, 1457055620),
+('/borrow/borrow/create', 2, NULL, NULL, NULL, 1457055642, 1457055642),
+('/borrow/borrow/delete', 2, NULL, NULL, NULL, 1457056256, 1457056256),
+('/borrow/borrow/index', 2, NULL, NULL, NULL, 1457055642, 1457055642),
+('/borrow/borrow/pdf', 2, NULL, NULL, NULL, 1457056260, 1457056260),
+('/borrow/borrow/update', 2, NULL, NULL, NULL, 1457056256, 1457056256),
+('/borrow/borrow/view', 2, NULL, NULL, NULL, 1457055642, 1457055642),
+('/borrow/report/*', 2, NULL, NULL, NULL, 1457055650, 1457055650),
+('/borrow/report/index', 2, NULL, NULL, NULL, 1457055620, 1457055620),
+('/borrow/report/report1', 2, NULL, NULL, NULL, 1457055649, 1457055649),
+('/borrow/report/report2', 2, NULL, NULL, NULL, 1457055650, 1457055650),
+('admin', 1, 'ผู้ดูแลระบบ', NULL, NULL, 1457055692, 1457055692);
+
 -- --------------------------------------------------------
 
 --
@@ -94,6 +119,13 @@ CREATE TABLE IF NOT EXISTS `auth_rule` (
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Dumping data for table `auth_rule`
+--
+
+INSERT INTO `auth_rule` (`name`, `data`, `created_at`, `updated_at`) VALUES
+('isOwn', 'O:27:"common\\components\\UpdateOwn":3:{s:4:"name";s:5:"isOwn";s:9:"createdAt";i:1457056069;s:9:"updatedAt";i:1457056132;}', 1457056069, 1457056132);
+
 -- --------------------------------------------------------
 
 --
@@ -107,12 +139,28 @@ CREATE TABLE IF NOT EXISTS `borrow` (
   `date_out` datetime NOT NULL COMMENT 'วันที่ยืม',
   `start_date` date DEFAULT NULL COMMENT 'วันเริ่มต้น',
   `end_date` date DEFAULT NULL COMMENT 'วันกำหนดส่งคืน',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
+  `file1` varchar(150) DEFAULT NULL COMMENT 'หนังสืออนุญาต',
+  `file2` varchar(150) DEFAULT NULL COMMENT 'หนังสือยืม',
+  `file3` varchar(150) DEFAULT NULL COMMENT 'หนังสือคืน',
+  `person_recieve_id` int(11) DEFAULT NULL COMMENT 'ผู้รับ',
+  `created_at` int(11) DEFAULT NULL,
+  `updated_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_borrow_person1_idx` (`person_id`),
-  KEY `fk_borrow_user1_idx` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+  KEY `fk_borrow_user1_idx` (`user_id`),
+  KEY `fk_borrow_person2_idx` (`person_recieve_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=6 ;
+
+--
+-- Dumping data for table `borrow`
+--
+
+INSERT INTO `borrow` (`id`, `person_id`, `user_id`, `date_out`, `start_date`, `end_date`, `file1`, `file2`, `file3`, `person_recieve_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, '2016-03-03 00:00:00', '2016-03-03', '2016-03-30', NULL, NULL, NULL, NULL, 0, 1456985703),
+(2, 1, 1, '2016-03-03 00:00:00', '2016-03-03', '2016-03-30', NULL, NULL, NULL, NULL, 0, 0),
+(3, 2, 1, '2016-03-03 00:00:00', '2016-03-03', NULL, 'f68c15024a876460feaff0b8c1544f20.pdf', 'f68c15024a876460feaff0b8c1544f20.pdf', NULL, NULL, 0, 1456994178),
+(4, 1, 1, '2016-03-03 00:00:00', '2016-03-03', NULL, NULL, NULL, NULL, NULL, 0, 0),
+(5, 1, 1, '2016-03-03 00:00:00', '2016-03-03', NULL, NULL, NULL, NULL, NULL, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -129,15 +177,25 @@ CREATE TABLE IF NOT EXISTS `borrow_item` (
   `person_id` int(11) DEFAULT NULL COMMENT 'ผู้คืน',
   `limited_id` int(11) NOT NULL COMMENT 'วงเงิน',
   `borrow_type` enum('0','1') NOT NULL COMMENT 'การใช้งาน',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
+  `created_at` int(11) DEFAULT NULL,
+  `updated_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_borrow_item_borrow1_idx` (`borrow_id`),
   KEY `fk_borrow_item_person1_idx` (`person_id`),
   KEY `fk_borrow_item_user1_idx` (`user_id`),
   KEY `fk_borrow_item_limited1_idx` (`limited_id`),
   KEY `fk_borrow_item_number_sim1_idx` (`number_sim_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='รายละเอียดการยืม' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='รายละเอียดการยืม' AUTO_INCREMENT=6 ;
+
+--
+-- Dumping data for table `borrow_item`
+--
+
+INSERT INTO `borrow_item` (`id`, `borrow_id`, `number_sim_id`, `date_return`, `user_id`, `person_id`, `limited_id`, `borrow_type`, `created_at`, `updated_at`) VALUES
+(2, 2, 1, NULL, NULL, NULL, 1, '0', 0, 0),
+(3, 3, 1, NULL, NULL, NULL, 1, '0', 0, 0),
+(4, 4, 1, NULL, NULL, NULL, 1, '0', 0, 0),
+(5, 5, 3, NULL, NULL, NULL, 1, '0', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -151,7 +209,14 @@ CREATE TABLE IF NOT EXISTS `department` (
   `name` varchar(100) NOT NULL COMMENT 'ฝ่าย',
   PRIMARY KEY (`id`),
   KEY `fk_department_line_company_idx` (`line_company_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='ฝ่าย' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='ฝ่าย' AUTO_INCREMENT=6 ;
+
+--
+-- Dumping data for table `department`
+--
+
+INSERT INTO `department` (`id`, `line_company_id`, `name`) VALUES
+(5, 1, 'วางแผน');
 
 -- --------------------------------------------------------
 
@@ -167,7 +232,14 @@ CREATE TABLE IF NOT EXISTS `employee` (
   PRIMARY KEY (`id`),
   KEY `fk_employee_section1_idx` (`section_id`),
   KEY `fk_employee_person1_idx` (`person_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='พนักงาน' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='พนักงาน' AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `employee`
+--
+
+INSERT INTO `employee` (`id`, `emp_id`, `section_id`, `person_id`) VALUES
+(2, '100001', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -180,7 +252,15 @@ CREATE TABLE IF NOT EXISTS `limited` (
   `limited` int(5) NOT NULL,
   `group` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='วงเงิน' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='วงเงิน' AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `limited`
+--
+
+INSERT INTO `limited` (`id`, `limited`, `group`) VALUES
+(1, 500, 'A'),
+(2, 1000, 'B');
 
 -- --------------------------------------------------------
 
@@ -192,7 +272,15 @@ CREATE TABLE IF NOT EXISTS `line_company` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL COMMENT 'สายงาน',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='สายงาน' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='สายงาน' AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `line_company`
+--
+
+INSERT INTO `line_company` (`id`, `name`) VALUES
+(1, 'ไร้สาย'),
+(2, 'การเงิน');
 
 -- --------------------------------------------------------
 
@@ -236,10 +324,20 @@ CREATE TABLE IF NOT EXISTS `number` (
   `zone_id` int(11) NOT NULL COMMENT 'ภาค',
   `number` varchar(45) NOT NULL COMMENT 'เบอร์โทร',
   `owner` enum('1','2') NOT NULL COMMENT 'ความเป็นเจ้าของ',
-  `status` enum('0','1','2') NOT NULL,
+  `status` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_number_zone1_idx` (`zone_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=7 ;
+
+--
+-- Dumping data for table `number`
+--
+
+INSERT INTO `number` (`id`, `zone_id`, `number`, `owner`, `status`) VALUES
+(3, 2, '0123456789', '1', 1),
+(4, 2, '0123456788', '1', 1),
+(5, 4, '32154654', '2', 1),
+(6, 5, '6546548', '2', 2);
 
 -- --------------------------------------------------------
 
@@ -254,7 +352,17 @@ CREATE TABLE IF NOT EXISTS `number_sim` (
   PRIMARY KEY (`id`),
   KEY `fk_number_sim_number1_idx` (`number_id`),
   KEY `fk_number_sim_sim_card1_idx` (`sim_card_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=5 ;
+
+--
+-- Dumping data for table `number_sim`
+--
+
+INSERT INTO `number_sim` (`id`, `number_id`, `sim_card_id`) VALUES
+(1, 3, 1),
+(2, 4, 2),
+(3, 5, 3),
+(4, 6, 4);
 
 -- --------------------------------------------------------
 
@@ -270,7 +378,15 @@ CREATE TABLE IF NOT EXISTS `person` (
   `address` text NOT NULL COMMENT 'ที่อยู่',
   `tel` varchar(45) NOT NULL COMMENT 'โทรศัพท์',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='บุคคล' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='บุคคล' AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `person`
+--
+
+INSERT INTO `person` (`id`, `firstname`, `lastname`, `citizen_id`, `address`, `tel`) VALUES
+(1, 'ทดสอบ', 'ทดสอบ', '1234567891011', 'address', ''),
+(2, 'ทดสอบ2', 'ทดสอบ2', '1234567891012', 'address', '');
 
 -- --------------------------------------------------------
 
@@ -295,7 +411,7 @@ CREATE TABLE IF NOT EXISTS `profile` (
 --
 
 INSERT INTO `profile` (`user_id`, `name`, `public_email`, `gravatar_email`, `gravatar_id`, `location`, `website`, `bio`) VALUES
-(1, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(1, 'ทดสอบ นามสกุล', '', '', 'd41d8cd98f00b204e9800998ecf8427e', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -309,7 +425,14 @@ CREATE TABLE IF NOT EXISTS `section` (
   `name` varchar(100) NOT NULL COMMENT 'ส่วน',
   PRIMARY KEY (`id`),
   KEY `fk_section_department1_idx` (`department_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='ส่วน' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='ส่วน' AUTO_INCREMENT=2 ;
+
+--
+-- Dumping data for table `section`
+--
+
+INSERT INTO `section` (`id`, `department_id`, `name`) VALUES
+(1, 5, 'ไอที');
 
 -- --------------------------------------------------------
 
@@ -323,7 +446,17 @@ CREATE TABLE IF NOT EXISTS `sim_card` (
   `sim_size_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_sim_card_sim_size1_idx` (`sim_size_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=5 ;
+
+--
+-- Dumping data for table `sim_card`
+--
+
+INSERT INTO `sim_card` (`id`, `iccid`, `sim_size_id`) VALUES
+(1, '123456789', 1),
+(2, '32156468', 2),
+(3, '65454', 2),
+(4, '484945', 3);
 
 -- --------------------------------------------------------
 
@@ -335,7 +468,16 @@ CREATE TABLE IF NOT EXISTS `sim_size` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sim_size` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=4 ;
+
+--
+-- Dumping data for table `sim_size`
+--
+
+INSERT INTO `sim_size` (`id`, `sim_size`) VALUES
+(1, 'Standard Sim'),
+(2, 'Micro Sim'),
+(3, 'Nano Sim');
 
 -- --------------------------------------------------------
 
@@ -421,7 +563,19 @@ CREATE TABLE IF NOT EXISTS `zone` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL COMMENT 'ภาค',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=7 ;
+
+--
+-- Dumping data for table `zone`
+--
+
+INSERT INTO `zone` (`id`, `name`) VALUES
+(1, 'เหนือ'),
+(2, 'กลาง'),
+(3, 'อีสาน'),
+(4, 'ใต้'),
+(5, 'ตะวันออก'),
+(6, 'ตะวันตก');
 
 --
 -- Constraints for dumped tables
@@ -431,8 +585,8 @@ CREATE TABLE IF NOT EXISTS `zone` (
 -- Constraints for table `authority`
 --
 ALTER TABLE `authority`
-  ADD CONSTRAINT `fk_authority_employee1` FOREIGN KEY (`employee_id`) REFERENCES `cat-noncharge`.`employee` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_authority_user1` FOREIGN KEY (`user_id`) REFERENCES `cat-noncharge`.`user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_authority_employee1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_authority_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `auth_assignment`
@@ -457,44 +611,45 @@ ALTER TABLE `auth_item_child`
 -- Constraints for table `borrow`
 --
 ALTER TABLE `borrow`
-  ADD CONSTRAINT `fk_borrow_person1` FOREIGN KEY (`person_id`) REFERENCES `cat-noncharge`.`person` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_borrow_user1` FOREIGN KEY (`user_id`) REFERENCES `cat-noncharge`.`user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_borrow_person1` FOREIGN KEY (`person_id`) REFERENCES `person` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_borrow_person2` FOREIGN KEY (`person_recieve_id`) REFERENCES `person` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_borrow_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `borrow_item`
 --
 ALTER TABLE `borrow_item`
-  ADD CONSTRAINT `fk_borrow_item_borrow1` FOREIGN KEY (`borrow_id`) REFERENCES `cat-noncharge`.`borrow` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_borrow_item_limited1` FOREIGN KEY (`limited_id`) REFERENCES `cat-noncharge`.`limited` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_borrow_item_person1` FOREIGN KEY (`person_id`) REFERENCES `cat-noncharge`.`person` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_borrow_item_user1` FOREIGN KEY (`user_id`) REFERENCES `cat-noncharge`.`user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_borrow_item_number_sim1` FOREIGN KEY (`number_sim_id`) REFERENCES `cat-noncharge`.`number_sim` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_borrow_item_borrow1` FOREIGN KEY (`borrow_id`) REFERENCES `borrow` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_borrow_item_limited1` FOREIGN KEY (`limited_id`) REFERENCES `limited` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_borrow_item_number_sim1` FOREIGN KEY (`number_sim_id`) REFERENCES `number_sim` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_borrow_item_person1` FOREIGN KEY (`person_id`) REFERENCES `person` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_borrow_item_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `department`
 --
 ALTER TABLE `department`
-  ADD CONSTRAINT `fk_department_line_company` FOREIGN KEY (`line_company_id`) REFERENCES `cat-noncharge`.`line_company` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_department_line_company` FOREIGN KEY (`line_company_id`) REFERENCES `line_company` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `employee`
 --
 ALTER TABLE `employee`
-  ADD CONSTRAINT `fk_employee_person1` FOREIGN KEY (`person_id`) REFERENCES `cat-noncharge`.`person` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_employee_section1` FOREIGN KEY (`section_id`) REFERENCES `cat-noncharge`.`section` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_employee_person1` FOREIGN KEY (`person_id`) REFERENCES `person` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_employee_section1` FOREIGN KEY (`section_id`) REFERENCES `section` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `number`
 --
 ALTER TABLE `number`
-  ADD CONSTRAINT `fk_number_zone1` FOREIGN KEY (`zone_id`) REFERENCES `cat-noncharge`.`zone` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_number_zone1` FOREIGN KEY (`zone_id`) REFERENCES `zone` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `number_sim`
 --
 ALTER TABLE `number_sim`
-  ADD CONSTRAINT `fk_number_sim_number1` FOREIGN KEY (`number_id`) REFERENCES `cat-noncharge`.`number` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_number_sim_sim_card1` FOREIGN KEY (`sim_card_id`) REFERENCES `cat-noncharge`.`sim_card` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_number_sim_number1` FOREIGN KEY (`number_id`) REFERENCES `number` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_number_sim_sim_card1` FOREIGN KEY (`sim_card_id`) REFERENCES `sim_card` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `profile`
@@ -506,13 +661,13 @@ ALTER TABLE `profile`
 -- Constraints for table `section`
 --
 ALTER TABLE `section`
-  ADD CONSTRAINT `fk_section_department1` FOREIGN KEY (`department_id`) REFERENCES `cat-noncharge`.`department` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_section_department1` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `sim_card`
 --
 ALTER TABLE `sim_card`
-  ADD CONSTRAINT `fk_sim_card_sim_size1` FOREIGN KEY (`sim_size_id`) REFERENCES `cat-noncharge`.`sim_size` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_sim_card_sim_size1` FOREIGN KEY (`sim_size_id`) REFERENCES `sim_size` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `social_account`
