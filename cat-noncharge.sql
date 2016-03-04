@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 04, 2016 at 09:26 AM
+-- Generation Time: Mar 04, 2016 at 12:22 PM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.32
 
@@ -158,9 +158,9 @@ CREATE TABLE IF NOT EXISTS `borrow` (
 INSERT INTO `borrow` (`id`, `person_id`, `user_id`, `date_out`, `start_date`, `end_date`, `file1`, `file2`, `file3`, `person_recieve_id`, `created_at`, `updated_at`) VALUES
 (1, 1, 1, '2016-03-03 00:00:00', '2016-03-03', '2016-03-30', NULL, NULL, NULL, NULL, 0, 1456985703),
 (2, 1, 1, '2016-03-03 00:00:00', '2016-03-03', '2016-03-30', NULL, NULL, NULL, NULL, 0, 0),
-(3, 2, 1, '2016-03-03 00:00:00', '2016-03-03', NULL, 'f68c15024a876460feaff0b8c1544f20.pdf', 'f68c15024a876460feaff0b8c1544f20.pdf', NULL, NULL, 0, 1456994178),
-(4, 1, 1, '2016-03-03 00:00:00', '2016-03-03', NULL, NULL, NULL, NULL, NULL, 0, 0),
-(5, 1, 1, '2016-03-03 00:00:00', '2016-03-03', NULL, NULL, NULL, NULL, NULL, 0, 0);
+(3, 2, 1, '2016-03-03 00:00:00', '2016-03-03', '2016-03-03', 'f68c15024a876460feaff0b8c1544f20.pdf', 'f68c15024a876460feaff0b8c1544f20.pdf', NULL, NULL, 0, 1456994178),
+(4, 1, 1, '2016-03-03 00:00:00', '2016-03-01', '2016-03-02', NULL, NULL, NULL, NULL, 0, 0),
+(5, 1, 1, '2016-03-03 00:00:00', '2016-03-03', '2016-03-03', NULL, NULL, NULL, NULL, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -374,6 +374,7 @@ CREATE TABLE IF NOT EXISTS `person` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `firstname` varchar(100) NOT NULL COMMENT 'ชื่อ',
   `lastname` varchar(100) NOT NULL COMMENT 'นามสกุล',
+  `photo` varchar(100) DEFAULT 'nopic.jpg',
   `citizen_id` varchar(13) NOT NULL COMMENT 'หมายเลขบัตรประชาชน',
   `address` text NOT NULL COMMENT 'ที่อยู่',
   `tel` varchar(45) NOT NULL COMMENT 'โทรศัพท์',
@@ -384,9 +385,9 @@ CREATE TABLE IF NOT EXISTS `person` (
 -- Dumping data for table `person`
 --
 
-INSERT INTO `person` (`id`, `firstname`, `lastname`, `citizen_id`, `address`, `tel`) VALUES
-(1, 'ทดสอบ', 'ทดสอบ', '1234567891011', 'address', ''),
-(2, 'ทดสอบ2', 'ทดสอบ2', '1234567891012', 'address', '');
+INSERT INTO `person` (`id`, `firstname`, `lastname`, `photo`, `citizen_id`, `address`, `tel`) VALUES
+(1, 'ทดสอบ', 'ทดสอบ', 'nopic.jpg', '1234567891011', 'address', ''),
+(2, 'ทดสอบ2', 'ทดสอบ2', 'nopic.jpg', '1234567891012', 'address', '');
 
 -- --------------------------------------------------------
 
@@ -612,8 +613,8 @@ ALTER TABLE `auth_item_child`
 --
 ALTER TABLE `borrow`
   ADD CONSTRAINT `fk_borrow_person1` FOREIGN KEY (`person_id`) REFERENCES `person` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_borrow_person2` FOREIGN KEY (`person_recieve_id`) REFERENCES `person` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_borrow_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_borrow_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_borrow_person2` FOREIGN KEY (`person_recieve_id`) REFERENCES `cat-noncharge`.`person` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `borrow_item`
