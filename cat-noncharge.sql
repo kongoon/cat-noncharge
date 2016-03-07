@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 04, 2016 at 12:22 PM
+-- Generation Time: Mar 07, 2016 at 01:53 PM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.32
 
@@ -33,14 +33,16 @@ CREATE TABLE IF NOT EXISTS `authority` (
   PRIMARY KEY (`id`),
   KEY `fk_authority_user1_idx` (`user_id`),
   KEY `fk_authority_employee1_idx` (`employee_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=4 ;
 
 --
 -- Dumping data for table `authority`
 --
 
 INSERT INTO `authority` (`id`, `user_id`, `employee_id`) VALUES
-(1, 1, 2);
+(1, 1, 2),
+(2, 2, 3),
+(3, 3, 4);
 
 -- --------------------------------------------------------
 
@@ -54,6 +56,15 @@ CREATE TABLE IF NOT EXISTS `auth_assignment` (
   `created_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`item_name`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `auth_assignment`
+--
+
+INSERT INTO `auth_assignment` (`item_name`, `user_id`, `created_at`) VALUES
+('admin', '1', 1457074654),
+('borrow_admin', '3', 1457075319),
+('user', '2', 1457075329);
 
 -- --------------------------------------------------------
 
@@ -90,7 +101,12 @@ INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `cr
 ('/borrow/report/index', 2, NULL, NULL, NULL, 1457055620, 1457055620),
 ('/borrow/report/report1', 2, NULL, NULL, NULL, 1457055649, 1457055649),
 ('/borrow/report/report2', 2, NULL, NULL, NULL, 1457055650, 1457055650),
-('admin', 1, 'ผู้ดูแลระบบ', NULL, NULL, 1457055692, 1457055692);
+('admin', 1, 'ผู้ดูแลระบบ', NULL, NULL, 1457055692, 1457055692),
+('borrow_admin', 1, 'เจ้าหน้าที่บริหารจัดการการยืมหมายเลข', NULL, NULL, 1457075055, 1457075055),
+('borrowAdmin', 2, 'บริหารจัดการการยืมหมายเลข', NULL, NULL, 1457075094, 1457075213),
+('borrowReport', 2, 'ดูรายงานการยืมหมายเลข', NULL, NULL, 1457075141, 1457075141),
+('borrowView', 2, 'ดูรายการยืมหมายเลข', NULL, NULL, 1457074532, 1457075180),
+('user', 1, 'เจ้าหน้าที่ทั่วไป', NULL, NULL, 1457075025, 1457075025);
 
 -- --------------------------------------------------------
 
@@ -104,6 +120,21 @@ CREATE TABLE IF NOT EXISTS `auth_item_child` (
   PRIMARY KEY (`parent`,`child`),
   KEY `child` (`child`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `auth_item_child`
+--
+
+INSERT INTO `auth_item_child` (`parent`, `child`) VALUES
+('borrowAdmin', '/borrow/borrow/*'),
+('borrowView', '/borrow/borrow/index'),
+('borrowView', '/borrow/borrow/view'),
+('borrowAdmin', '/borrow/report/*'),
+('borrowReport', '/borrow/report/*'),
+('borrow_admin', 'borrowAdmin'),
+('admin', 'borrowReport'),
+('admin', 'borrowView'),
+('user', 'borrowView');
 
 -- --------------------------------------------------------
 
@@ -232,14 +263,16 @@ CREATE TABLE IF NOT EXISTS `employee` (
   PRIMARY KEY (`id`),
   KEY `fk_employee_section1_idx` (`section_id`),
   KEY `fk_employee_person1_idx` (`person_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='พนักงาน' AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='พนักงาน' AUTO_INCREMENT=5 ;
 
 --
 -- Dumping data for table `employee`
 --
 
 INSERT INTO `employee` (`id`, `emp_id`, `section_id`, `person_id`) VALUES
-(2, '100001', 1, 1);
+(2, '100001', 1, 1),
+(3, '1234', 1, 3),
+(4, '6547', 1, 4);
 
 -- --------------------------------------------------------
 
@@ -379,7 +412,7 @@ CREATE TABLE IF NOT EXISTS `person` (
   `address` text NOT NULL COMMENT 'ที่อยู่',
   `tel` varchar(45) NOT NULL COMMENT 'โทรศัพท์',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='บุคคล' AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='บุคคล' AUTO_INCREMENT=5 ;
 
 --
 -- Dumping data for table `person`
@@ -387,7 +420,9 @@ CREATE TABLE IF NOT EXISTS `person` (
 
 INSERT INTO `person` (`id`, `firstname`, `lastname`, `photo`, `citizen_id`, `address`, `tel`) VALUES
 (1, 'ทดสอบ', 'ทดสอบ', 'nopic.jpg', '1234567891011', 'address', ''),
-(2, 'ทดสอบ2', 'ทดสอบ2', 'nopic.jpg', '1234567891012', 'address', '');
+(2, 'ทดสอบ2', 'ทดสอบ2', 'nopic.jpg', '1234567891012', 'address', ''),
+(3, 'Test', 'Test', 'nopic.jpg', '', '', ''),
+(4, 'Demo', 'Demo', 'nopic.jpg', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -412,7 +447,9 @@ CREATE TABLE IF NOT EXISTS `profile` (
 --
 
 INSERT INTO `profile` (`user_id`, `name`, `public_email`, `gravatar_email`, `gravatar_id`, `location`, `website`, `bio`) VALUES
-(1, 'ทดสอบ นามสกุล', '', '', 'd41d8cd98f00b204e9800998ecf8427e', '', '', '');
+(1, 'ทดสอบ นามสกุล', '', '', 'd41d8cd98f00b204e9800998ecf8427e', '', '', ''),
+(2, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(3, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -545,14 +582,16 @@ CREATE TABLE IF NOT EXISTS `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_unique_email` (`email`),
   UNIQUE KEY `user_unique_username` (`username`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=4 ;
 
 --
 -- Dumping data for table `user`
 --
 
 INSERT INTO `user` (`id`, `username`, `password_hash`, `auth_key`, `email`, `confirmed_at`, `unconfirmed_email`, `blocked_at`, `registration_ip`, `created_at`, `updated_at`, `flags`) VALUES
-(1, 'admin', '$2y$10$/P9SDjebBe1xEzfSngx9L.YZbvPyydlkg0RQ4Pm9d0IbuJqgA1jg.', 'dc1xDF_m-ZiUKeGXCEgKaNkraPmuDtlx', 'admin@admin.com', 1456913177, NULL, NULL, '::1', 1456913177, 1456913177, 0);
+(1, 'admin', '$2y$10$/P9SDjebBe1xEzfSngx9L.YZbvPyydlkg0RQ4Pm9d0IbuJqgA1jg.', 'dc1xDF_m-ZiUKeGXCEgKaNkraPmuDtlx', 'admin@admin.com', 1456913177, NULL, NULL, '::1', 1456913177, 1456913177, 0),
+(2, 'test', '$2y$12$DAvShsZq6O4xba2FPJQiM.ns6oE9p0BzEXCNjX9sQW73RTUQlH7im', 'AjnPnSz_D3dZbq19CdjO2Cym8zWazIwr', 'test@test.com', 1457074970, NULL, NULL, '::1', 1457074970, 1457074970, 0),
+(3, 'demo', '$2y$12$3zCdJipehr5QH.qZy8wj7OvMs5mlEPjfcf7qZMYAhP3RcZtZuq1Um', 'L9lw-FeJd14G9781zdyEtCLBgxQPMPVf', 'demo@demo.com', 1457074984, NULL, NULL, '::1', 1457074984, 1457074984, 0);
 
 -- --------------------------------------------------------
 
